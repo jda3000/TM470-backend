@@ -5,7 +5,7 @@ from decouple import config
 from dj_database_url import parse as dburl
 
 DEFAULT_DBURL = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
-
+print('debug', DEBUG)
 if DEBUG:
     DATABASES = {
         'default': {
