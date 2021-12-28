@@ -7,6 +7,7 @@ from dj_database_url import parse as dburl
 DEFAULT_DBURL = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
 print('debug', DEBUG)
 if DEBUG:
+    print('here 1')
     DATABASES = {
         'default': {
             'ENGINE': 'django.contrib.gis.db.backends.postgis',
@@ -18,6 +19,7 @@ if DEBUG:
         }
     }
 else:
+    print('here 2')
     DATABASES = {
         'default': config('PRODUCTION_DB_URL', default=DEFAULT_DBURL, cast=dburl)
     }
