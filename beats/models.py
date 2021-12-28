@@ -1,8 +1,9 @@
 from django.contrib.postgres.operations import CreateExtension
 from django.db import migrations
 from django.contrib.gis.db import models
+from django.contrib.auth import get_user_model
 
-# Create your models here.
+User = get_user_model()
 
 
 class Migration(migrations.Migration):
@@ -13,8 +14,10 @@ class Migration(migrations.Migration):
 
 
 class Beat(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField()
-    coordinates = models.LineStringField(blank=True, null=True)
+    route = models.LineStringField(blank=True, null=True)
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.description}'
