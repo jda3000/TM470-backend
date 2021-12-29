@@ -4,6 +4,7 @@ Django==3.2.10
 djangorestframework==3.13.1
 djangorestframework-gis @ https://github.com/openwisp/django-rest-framework-gis/tarball/master
 djangorestframework-simplejwt==5.0.0
+gunicorn==20.1.0
 psycopg2==2.9.2
 PyJWT==2.3.0
 python-decouple==3.5
