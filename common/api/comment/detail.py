@@ -12,11 +12,11 @@ class BeatDetail(APIView):
 
     def get(self, request):
         try:
-            beat_ob = Beat.objects.get(id=request.GET.get('id'))
+            beat = Beat.objects.get(id=request.GET.get('id'))
         except ObjectDoesNotExist:
             return Response(status=HTTP_400_BAD_REQUEST)
 
-        serializer = BeatDetailSerializer(instance=beat_ob)
+        serializer = BeatDetailSerializer(instance=beat)
         return Response(serializer.data, status=HTTP_200_OK)
 
     def post(self, request):
@@ -32,16 +32,3 @@ class BeatDetail(APIView):
         except ObjectDoesNotExist:
             return Response('Beat not found', status=HTTP_400_BAD_REQUEST)
         return Response(status=HTTP_200_OK)
-
-    def patch(self, request):
-        try:
-            beat_ob = Beat.objects.filter(user=request.user).get(id=request.GET.get('id'))
-        except ObjectDoesNotExist:
-            return Response('Beat not found', status=HTTP_400_BAD_REQUEST)
-
-        serializer = BeatDetailSerializer(instance=beat_ob, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status=HTTP_200_OK)
-        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)

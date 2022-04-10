@@ -1,7 +1,6 @@
 from django.urls import path
 
-from beats.api.list import BeatsList
-from beats.api.detail import BeatDetail
+from beats.api import *
 
 urlpatterns = [
     path('list', BeatsList.as_view()),
