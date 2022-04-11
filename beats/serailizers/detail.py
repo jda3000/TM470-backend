@@ -16,4 +16,6 @@ class BeatSaveSerializer(serializers.ModelSerializer):
         fields = (
             'description',
             'route',
+            'start_time',
+            'end_time',
         )
