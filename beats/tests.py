@@ -1,4 +1,5 @@
 import datetime
+from django.utils.timezone import make_aware
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -28,20 +29,50 @@ class BeatTests(APITestCase):
         user = User.objects.create(username='test')
         user.set_password('test')
         user.save()
-        return self._login_credentials(user)
+        return user, self._login_credentials(user).access_token
 
     def _login_credentials(self, user):
         return RefreshToken.for_user(user)
+
+
+    def test_get_beat_missing(self):
+        """ test get a beat that does no exist """
+        url = reverse(f'beats:beat_detail') + f'?id=1'
+        user, access_token = self.create_user()
+        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(access_token))
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
     def test_create_beat(self):
         """
         Ensure we can create a new beat object.
         """
         url = reverse('beats:beat_detail')
+        user, access_token = self.create_user()
 
-        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(self.create_user().access_token))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(access_token))
         response = self.client.post(url, self.test_new_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+    def test_get_beat(self):
+        """ test get a beat that exists"""
+        user, access_token = self.create_user()
+
+        beat = Beat.objects.create(
+            user=user,
+            description='test',
+            start_time=make_aware(datetime.datetime.now()),
+            end_time=make_aware(datetime.datetime.now())
+        )
+
+        url = reverse(f'beats:beat_detail') + f'?id={beat.id}'
+        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(access_token))
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
     def test_create_beat_missing_description(self):
         """ Ensure no beat is created without missing route """
@@ -54,20 +85,20 @@ class BeatTests(APITestCase):
             'start_time': datetime.datetime.now(),
             'end_time': datetime.datetime.now()
         }
-
-        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(self.create_user().access_token))
+        user, access_token = self.create_user()
+        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(access_token))
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_edit_beat(self):
         """ Ensure we can edit a Beat object """
 
-        tokens = self.create_user()
+        user, access_token = self.create_user()
 
         # create new Beat
         url = reverse('beats:beat_detail')
 
-        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(tokens.access_token))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(access_token))
         response = self.client.post(url, self.test_new_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -76,26 +107,26 @@ class BeatTests(APITestCase):
             'id': response.data['id']
         }
 
-        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(tokens.access_token))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(access_token))
         response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_delete_beat(self):
-        tokens = self.create_user()
+        user, access_token = self.create_user()
 
         # create new Beat
         url = reverse('beats:beat_detail')
         # initial number of Beat records in DB
         beat_initial_count = Beat.objects.all().count()
 
-        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(tokens.access_token))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(access_token))
         response = self.client.post(url, self.test_new_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # delete Beat
         url = reverse(f'beats:beat_detail') + f'?id={response.data["id"]}'
 
-        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(tokens.access_token))
+        self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(access_token))
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
