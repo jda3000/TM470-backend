@@ -41,9 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'rest_framework',
     'rest_framework_gis',
-    'beats',
-    'problems',
     'common',
+    'problems',
+    'beats',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -96,6 +97,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -120,3 +122,6 @@ STATIC_URL = '/staticfiles/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 APPEND_SLASH = False
 
+
+# Custom User Model
+AUTH_USER_MODEL = 'user.User'

@@ -3,32 +3,30 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
-from beats.models import Beat
+from beats.models.beat import Beat
+from common.models.comment import Comment
+from common.serailizers.comment import CommentSaveSerializer, CommentListSerializer
 
-from beats.serailizers.detail import BeatSaveSerializer, BeatDetailSerializer
 
-
-class BeatDetail(APIView):
+class CommentList(APIView):
 
     def get(self, request):
+        print(request.GET)
         try:
-            beat = Beat.objects.get(id=request.GET.get('id'))
+            beat = Beat.objects.get(id=request.GET.get('beat'))
         except ObjectDoesNotExist:
-            return Response(status=HTTP_400_BAD_REQUEST)
+            return Response('beat does not exist', status=HTTP_400_BAD_REQUEST)
 
-        serializer = BeatDetailSerializer(instance=beat)
+        comments = Comment.objects.filter(beat_id=beat.id).order_by('-date_created')
+        serializer = CommentListSerializer(comments, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
 
+
+class CommentDetail(APIView):
+
     def post(self, request):
-        serializer = BeatSaveSerializer(data=request.data)
+        serializer = CommentSaveSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(status=HTTP_200_OK)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-
-    def delete(self, request):
-        try:
-            Beat.objects.filter(user=request.user).get(id=request.GET.get('id')).delete()
-        except ObjectDoesNotExist:
-            return Response('Beat not found', status=HTTP_400_BAD_REQUEST)
-        return Response(status=HTTP_200_OK)

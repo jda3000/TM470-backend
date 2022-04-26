@@ -25,10 +25,13 @@ from .api import *
 urlpatterns = [
     # admin
     path('admin/', admin.site.urls),
+    # user
+    path('user/api/', include(('user.urls', 'user'), namespace='users')),
     # sessions
     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/register/', Register.as_view()),
     # apps
-    path('beats/api/', include(('beats.urls', 'beats'), namespace='beats'))
+    path('beats/api/', include(('beats.urls', 'beats'), namespace='beats')),
+    path('common/api/', include(('common.urls', 'common'), namespace='common'))
 ]

@@ -3,24 +3,27 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
-from beats.models import Beat
+from common.models.like import Like
+from beats.models.beat import Beat
+from common.serailizers.like import LikeSaveSerializer, LikeDetailSerializer
 
-from beats.serailizers.detail import BeatSaveSerializer, BeatDetailSerializer
 
-
-class BeatDetail(APIView):
+class ListList(APIView):
 
     def get(self, request):
         try:
-            beat = Beat.objects.get(id=request.GET.get('id'))
+            beat = Beat.objects.get(id=request.GET.get('beat'))
         except ObjectDoesNotExist:
-            return Response(status=HTTP_400_BAD_REQUEST)
-
-        serializer = BeatDetailSerializer(instance=beat)
+            return Response('Beat does not exist', status=HTTP_400_BAD_REQUEST)
+        likes = Like.objects.filter(beat_id=beat.id)
+        serializer = LikeDetailSerializer(likes, many=True)
         return Response(serializer.data, status=HTTP_200_OK)
 
+
+class LikeDetail(APIView):
+
     def post(self, request):
-        serializer = BeatSaveSerializer(data=request.data)
+        serializer = LikeSaveSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(status=HTTP_200_OK)
@@ -28,7 +31,7 @@ class BeatDetail(APIView):
 
     def delete(self, request):
         try:
-            Beat.objects.filter(user=request.user).get(id=request.GET.get('id')).delete()
+            Like.objects.filter(user=request.user).get(id=request.GET.get('id')).delete()
         except ObjectDoesNotExist:
-            return Response('Beat not found', status=HTTP_400_BAD_REQUEST)
+            return Response('Like not found', status=HTTP_400_BAD_REQUEST)
         return Response(status=HTTP_200_OK)

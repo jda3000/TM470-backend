@@ -13,6 +13,9 @@ from beats.models.beat import Beat
 User = get_user_model()
 
 
+# tests designed for data security (confidentiality, integrity, and availability)
+# TODO test anonymous user
+
 class BeatTests(APITestCase):
     test_new_data = {
         'description': 'new test beat',
@@ -34,7 +37,6 @@ class BeatTests(APITestCase):
     def _login_credentials(self, user):
         return RefreshToken.for_user(user)
 
-
     def test_get_beat_missing(self):
         """ test get a beat that does no exist """
         url = reverse(f'beats:beat_detail') + f'?id=1'
@@ -43,7 +45,6 @@ class BeatTests(APITestCase):
 
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
 
     def test_create_beat(self):
         """
@@ -55,7 +56,6 @@ class BeatTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(access_token))
         response = self.client.post(url, self.test_new_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
 
     def test_get_beat(self):
         """ test get a beat that exists"""
@@ -72,7 +72,6 @@ class BeatTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='JWT {0}'.format(access_token))
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
 
     def test_create_beat_missing_description(self):
         """ Ensure no beat is created without missing route """

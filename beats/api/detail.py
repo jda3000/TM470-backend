@@ -1,3 +1,5 @@
+import pprint
+
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_201_CREATED, HTTP_204_NO_CONTENT
@@ -17,14 +19,18 @@ class BeatDetail(APIView):
             return Response(status=HTTP_400_BAD_REQUEST)
 
         serializer = BeatDetailSerializer(instance=beat_ob)
+        pprint.pprint(serializer.data)
         return Response(serializer.data, status=HTTP_200_OK)
 
     def post(self, request):
         serializer = BeatSaveSerializer(data=request.data)
+        print('initial data', serializer.initial_data)
+
         if serializer.is_valid():
             beat = serializer.save(user=request.user)
             serializer = BeatDetailSerializer(instance=beat)
             return Response(serializer.data, status=HTTP_201_CREATED)
+        print(serializer.errors)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
