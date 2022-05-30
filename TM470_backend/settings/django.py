@@ -125,3 +125,4 @@ APPEND_SLASH = False
 
 # Custom User Model
 AUTH_USER_MODEL = 'user.User'
+

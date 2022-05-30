@@ -15,12 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views #import this
 
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from .settings.jwt_token import CustomTokenObtainPairView
-from .api import *
+
+from user.api.forgotten_password import ForgottenPassword
+from user.api.regsiter import Register
 
 urlpatterns = [
     # admin
@@ -30,8 +33,12 @@ urlpatterns = [
     # sessions
     path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/register/', Register.as_view()),
+    path('api/register/', Register.as_view(), name='register'),
+    path('api/forgotten_password/', ForgottenPassword.as_view(), name='forgotten_password'),
     # apps
     path('beats/api/', include(('beats.urls', 'beats'), namespace='beats')),
-    path('common/api/', include(('common.urls', 'common'), namespace='common'))
+    path('common/api/', include(('common.urls', 'common'), namespace='common')),
+    # password reset default views
+    path('accounts/', include('django.contrib.auth.urls'))
 ]
+
