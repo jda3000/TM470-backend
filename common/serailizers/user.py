@@ -12,6 +12,15 @@ class UserNameBasicSerializer(serializers.ModelSerializer):
             'username',
         )
 
+class UserFollowingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'username',
+            'image_thumb',
+        )
+
 
 class UserBasicSerializer(serializers.ModelSerializer):
     class Meta:

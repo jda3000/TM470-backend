@@ -9,4 +9,7 @@ urlpatterns = [
     # likes
     path('like_detail', LikeDetail.as_view()),
     path('like_list', ListList.as_view()),
+    # following
+    path('following_list', FollowingList.as_view()),
+    path('following_detail', FollowingDetail.as_view())
 ]

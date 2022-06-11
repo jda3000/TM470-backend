@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from rest_framework_gis.serializers import GeometryField
 from beats.models import Beat
 
 from common.serailizers.like import LikeDetailSerializer
@@ -20,3 +20,9 @@ class BeatListSerializer(serializers.ModelSerializer):
 class BeatListLoadSerailizer(serializers.Serializer):
     # excludes the first number of objects found: this is for a rolling list on client application
     exclude_first = serializers.IntegerField(required=True)
+
+
+class BeatMapLoadSerializer(serializers.Serializer):
+    coordinates = GeometryField()
+    latitude_delta = serializers.FloatField()
+    longitude_delta = serializers.FloatField()

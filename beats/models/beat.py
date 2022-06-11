@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-# add this to the intial migration to install postgis extension
+# add this to the initial migration to install postgis extension
 # class Migration(migrations.Migration):
 #
 #     operations = [
@@ -21,6 +21,9 @@ class Beat(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField(null=True, blank=True) # allow blank end time as may want to save beat before finishing it (i.e. to resume at a later time/date)
     litter_collected_amount = models.PositiveSmallIntegerField(null=True, blank=True)
+    private = models.BooleanField(default=False)
+    start_point = models.PointField(null=True, blank=True)
+
 
     def __str__(self):
         return f'{self.description}'
