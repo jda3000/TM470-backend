@@ -1,15 +1,17 @@
-from django.contrib.postgres.operations import CreateExtension
-from django.db import migrations
+
 from django.contrib.gis.db import models
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-# add this to the initial migration to install postgis extension
-class Migration(migrations.Migration):
-    operations = [
-        CreateExtension('postgis'),
-    ]
+#
+# from django.contrib.postgres.operations import CreateExtension
+# from django.db import migrations
+# # add this to the initial migration to install postgis extension
+# class Migration(migrations.Migration):
+#     operations = [
+#         CreateExtension('postgis'),
+#     ]
 
 
 class Beat(models.Model):
