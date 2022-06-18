@@ -17,3 +17,8 @@ workspace.xml
 .env
 .venv
 render.yaml
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
